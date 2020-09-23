@@ -1,0 +1,7 @@
+.border-container{
+    width: 100vw;
+    height: 100vh;
+}
+html, body{
+    overflow: hidden;
+}
