@@ -1,14 +1,13 @@
-import React from 'react';
+import React  from 'react';
 import './index.css';
+import Canvas from '../canvas'
 
-function init() {
-    
-}
 
 function Board() {
+
     return (
         <div className="border-container">
-            <canvas></canvas>
+            <Canvas></Canvas>
         </div>
     );
 }

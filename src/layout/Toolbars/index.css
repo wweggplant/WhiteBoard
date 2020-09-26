@@ -1,0 +1,9 @@
+.toolbars-wrap{
+    position: fixed;
+    top:0px;
+    width: 100%;
+    padding: 10px 20px;
+}
+.toolbars{
+    box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
+}
