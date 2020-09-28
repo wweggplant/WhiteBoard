@@ -7,6 +7,8 @@ const FLAGS = {
   GRAPH: 1 << 2,
   // 橡皮
   ERASER: 1 << 3,
+  //  空状态
+  NOONE: 1 << 4,
   // 运动状态
   MOTION_NOONE:1 << 100,
   MOTION_START: 1 << 101,

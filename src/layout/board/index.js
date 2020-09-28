@@ -2,10 +2,10 @@ import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'rea
 import './index.css';
 import Canvas from '../canvas'
 import Pen from '../../components/pen'
-function Board(state) {
+function Board({state, canvasRef, strategy}) {
   return (
     <div className="border-container">
-      <Canvas state={ state }></Canvas>
+      <Canvas state={ state } canvasRef={canvasRef} strategy={strategy}></Canvas>
       <Pen state={ state }/>
     </div>
   );

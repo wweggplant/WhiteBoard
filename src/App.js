@@ -5,7 +5,7 @@ import CONST from './const.js'
 function App() {
   return (
     <div className="App">
-      <Layout state={ CONST.PAINT }/>
+      <Layout state={ CONST.NOONE }/>
     </div>
   );
 }

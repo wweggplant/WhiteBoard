@@ -3,7 +3,7 @@ import CONST from '../const'
 
 
 function usePenState({ state }) {
-  const [penState] = useState({
+  const [penState, setPenState] = useState({
     state,
     motion: CONST.MOTION_NOONE,
     penCanvasData: {
@@ -15,6 +15,12 @@ function usePenState({ state }) {
     },
     point: []
   })
+  useEffect(() => {
+    if  (state === CONST.NOONE) {
+      penState.state = CONST.PAINT
+      setPenState(penState)
+    }
+  }, [state])
   return [penState]
 }
 

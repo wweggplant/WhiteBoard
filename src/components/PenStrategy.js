@@ -4,7 +4,9 @@ import { drawLine } from '../utils/canvas'
   画笔的策略
 */
 export function strategyFactory(ctx, state){
-  if (state === CONST.PAINT) {
+  console.log(state.state)
+  console.log( CONST.PAINT)
+  if (state.state === CONST.PAINT) {
     return new PaintPenStrategy(ctx, state)
   } else {
 
@@ -17,7 +19,6 @@ class PenStrategy {
   constructor(ctx, state) {
     this.state = state
     this.ctx = ctx
-    debugger
     const { penCanvasData } = state
     for(let key in penCanvasData) {
       this.ctx[key] = penCanvasData[key]
@@ -40,21 +41,21 @@ class PaintPenStrategy extends PenStrategy{
     console.log('🖌的策略')
     const point = [e.clientX, e.clientY]
     // 设置初始状态
-    const state = this.state
-    if (state === CONST.NORMAL) {
-      this.state.state = CONST.PAINT
+    const motion = this.state.motion
+    if (motion === CONST.MOTION_NOONE || motion === CONST.MOTION_END) {
+      this.state.motion = CONST.MOTION_MOVE
       this.last = point
     } else {
-      // TODO 
+      // TODO
     }
   }
   move(e) {
-    if (this.state.state === CONST.PAINT) {
+    if (this.state.motion === CONST.MOTION_MOVE) {
       drawLine(this.ctx, this.last, [e.clientX, e.clientY])
       this.last = [e.clientX, e.clientY]
     }
   }
   end(e) {
-    this.state.state = CONST.NORMAL
+    this.state.motion = CONST.MOTION_END
   }
 }
