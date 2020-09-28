@@ -1,15 +1,14 @@
-import React  from 'react';
+import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'react'
 import './index.css';
 import Canvas from '../canvas'
-
-
-function Board() {
-
-    return (
-        <div className="border-container">
-            <Canvas></Canvas>
-        </div>
-    );
+import Pen from '../../components/pen'
+function Board(state) {
+  return (
+    <div className="border-container">
+      <Canvas state={ state }></Canvas>
+      <Pen state={ state }/>
+    </div>
+  );
 }
 
 export default Board;

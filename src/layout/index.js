@@ -2,11 +2,11 @@ import React  from 'react';
 import Board from './board'
 import Toolbars from './Toolbars'
 
-function Layout() {
+function Layout({ state }) {
     return (
         <div className="layout-container">
-            <Board></Board>
-            <Toolbars />
+            <Board state={state}></Board>
+            <Toolbars state={state}/>
         </div>
     );
 }
