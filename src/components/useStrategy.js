@@ -1,45 +1,57 @@
-import { useState, useEffect, useRef, useCallback} from 'react'
+import { useEffect, useCallback, useState} from 'react'
 import { strategyFactory } from "./PenStrategy";
-import usePenState from './usePenState'
 import CONST from '../const'
 
-const pen = {
-    state: CONST.NORMAL,
-    motion: CONST.MOTION_NOONE,
-    penCanvasData: {
-        lineWidth: 5,
-        lineColor: 'black',
-        fillStyle: 'black',
-        strokeStyle: 'black',
-        lineCap: 'round',
-    },
-    point: []
+const PENSTATE = {
+  state: CONST.NORMAL,
+  motion: CONST.MOTION_NOONE,
+  penCanvasData: {
+    lineWidth: 5,
+    lineColor: 'black',
+    fillStyle: 'black',
+    strokeStyle: 'black',
+    lineCap: 'round',
+  }
 }
 let strategy
+let ctx
+
+// 全局的命令,类似redux
 const actionList = {
-  changeStrategy(state){
-    strategy = strategyFactory(ctx, penState)
+  changeStrategy(pen){
+    Object.assign(PENSTATE, pen)
+    strategy = strategyFactory(ctx, PENSTATE)
+    return strategy
   },
   getStrategy() {
     return strategy
+  },
+  setCanvasCtx(context) {
+    ctx = context
+  },
+  setCanvasCtxData(data) {
+    Object.assign(PENSTATE.penCanvasData, data)
+  },
+  getCanvasCtxData() {
+    return PENSTATE.penCanvasData
   }
 }
-const commit = useCallback((actionToken, payload)=>{
-    actionList[actionToken](payload)
-},[ actionList ])
 
 
 function useStrategy({state}) {
-  const [strategy, setStrategy] = useState({})
-  const [penState] = usePenState({state})
-  const canvasRef = useRef(null)
+  const commit = useCallback((actionToken, payload)=>{
+    actionList[actionToken](payload)
+  },[])
+
+  const getStrategy = function() {
+    return commit('getStrategy')
+  }
   useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    const strategy = strategyFactory(ctx, penState)
-    setStrategy(strategy)
-  }, [state])
-  return [strategy, setStrategy, canvasRef]
+    if (ctx) {
+      commit('changeStrategy', state)
+    }
+  }, [commit, state])
+  return [getStrategy, commit]
 }
 
 export default useStrategy
