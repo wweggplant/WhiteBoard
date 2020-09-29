@@ -4,9 +4,7 @@ import { drawLine } from '../utils/canvas'
   画笔的策略
 */
 export function strategyFactory(ctx, state){
-  console.log(state.state)
-  console.log( CONST.PAINT)
-  if (state.state === CONST.PAINT) {
+  if (state.status === CONST.PAINT) {
     return new PaintPenStrategy(ctx, state)
   } else {
 

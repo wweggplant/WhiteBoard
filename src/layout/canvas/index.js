@@ -1,29 +1,23 @@
-import React, { useState, useCallback, useEffect, useRef, forwardRef } from 'react'
-import useStrategy from '../../components/useStrategy'
-
-function Canvas({ state }) {
+import React, {
+  useRef, useContext
+} from 'react'
+import useStrategyEvents from '../../components/useStrategyEvents'
+import usePenStateService from '../../components/usePenStateService'
+function Canvas() {
   const doc = document.documentElement
   const width =  doc.clientWidth
   const height =  doc.clientHeight
   const canvasRef = useRef(null)
-  const [getStrategy, commit] = useStrategy(state)
-  function initStrategy(strategy, name, event) {
-    strategy && strategy[name] && strategy[name](event)
-  }
-  function start(event) {
-    initStrategy(getStrategy(), 'start', event)
-  }
-  function move(event) {
-    initStrategy(getStrategy(), 'move', event)
-  }
-  function end(event) {
-    initStrategy(getStrategy(), 'end', event)
-  }
-
-  useEffect(() => {
-    commit('setCanvasCtx', canvasRef.current.getContext('2d'))
+  const [STATE, setStatus] = usePenStateService({})
+  const [getEvents] = useStrategyEvents({
+    STATE,
+    canvasRef
   })
-
+  const {
+    start,
+    move,
+    end
+  } = getEvents()
   return (
     <div>
       <canvas onMouseDown={start} onMouseMove={move} onMouseUp={end} width={width} height={height} ref={canvasRef}></canvas>
