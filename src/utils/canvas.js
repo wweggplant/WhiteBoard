@@ -4,34 +4,48 @@ export function drawLine(ctx, start, end) {
   ctx.lineTo(end[0], end[1])
   ctx.stroke()
 }
-// 绘制动态矩形
-export function drawAniRect() {
-
-}
 export function saveCtx(ctx) {
   ctx.save();
 }
 export function restoreCtx(ctx) {
   ctx.restore();
 }
-export function drawRect(ctx, start, end, type = 'stroke') {
-  const origin = [Math.min(start[0], end[0]), Math.min(start[1], end[1])]
-  const width = Math.abs(start[0] - end[0])
-  const height = Math.abs(start[1] - end[1])
-  let method
-  if(type=== 'fill'){
-    method = 'fillRect'
-  }else if(type=== 'stroke'){
-    method = 'strokeRect'
-  } else if (type=== 'clear'){
-    method = 'clearRect'
+
+export function clearCanvas(ctx) {
+  const width = ctx.canvas.width
+  const height = ctx.canvas.height
+  ctx.clearRect(0, 0, width, height)
+}
+
+export function copyCanvasImg2Canvas(srcCtx, destCtx, callback) {
+  const img = new Image()
+  img.src = srcCtx.canvas.toDataURL()
+  img.onload = () => {
+    destCtx.drawImage(
+        img,
+        0,
+        0,
+        img.width,
+        img.height,
+        0,
+        0,
+        destCtx.canvas.width,
+        destCtx.canvas.height
+    )
+    callback && callback()
   }
-  ctx[method](origin[0], origin[1], width, height);
-  return {
-    origin,
-    width,
-    height,
-  }
+}
+
+export function drawRect(ctx, start, end) {
+  ctx.beginPath()
+  const [startX ,startY] = start
+  const [endX ,endY] = end
+  ctx.moveTo(startX, startY)
+  ctx.lineTo(endX, startY)
+  ctx.lineTo(endX, endY)
+  ctx.lineTo(startX, endY)
+  ctx.lineTo(startX, startY)
+  ctx.stroke();
 }
 export function setCtxData(ctx, data) {
   if (ctx) {

@@ -1,5 +1,5 @@
 import CONST from '../const'
-import { drawLine, drawRect, saveCtx, restoreCtx,setCtxData } from '../utils/canvas'
+import { drawLine, drawRect, saveCtx, restoreCtx, setCtxData, copyCanvasImg2Canvas, clearCanvas } from '../utils/canvas'
 
 function canMotion(motion) {
   return motion === CONST.MOTION_NOONE || motion === CONST.MOTION_END
@@ -13,124 +13,121 @@ function isMotion(motion, compareStatus = CONST.MOTION_MOVE) {
 export function strategyFactory(state){
   switch (state.status) {
     case CONST.PAINT:
-      return new PaintStrategy(state)
+      return new PaintStrategy(state, '🖌')
     case CONST.RECT:
-      return new ReatStrategy(state)
+      return new ReatStrategy(state, '⏹')
     case CONST.ERASER:
-      return new EraserStrategy(state)
+      return new EraserStrategy(state, '🧼')
     case CONST.CIRCULAR:
-      return new CircularStrategy(state)
+      return new CircularStrategy(state, '⭕️')
     default:
       return new PenStrategy(state);
   }
 }
 class PenStrategy {
   state
-  name = '默认'
-  constructor(state) {
+  name
+  canEventEnd = true
+  ctx
+  _ctx
+  constructor(state, name = '默认') {
     this.state = state
+    this.name = name
     console.log(`当前选择的画笔策略是:${this.name}`)
   }
-  start(ctx, e) {
-    const motion = this.state.motion
-    if (canMotion(motion)) {
-      this.state.motion = CONST.MOTION_MOVE
-      setCtxData(ctx, this.state.penCanvasData)
-    } else {
-      // TODO
+  canMotion() {
+    return canMotion(this.state.motion)
+  }
+  isMotion(status = CONST.MOTION_MOVE) {
+    return isMotion(this.state.motion, status)
+  }
+  eventStart(e, _ctx, ctx) {
+    this._ctx = _ctx
+    this.ctx = ctx
+  }
+  eventEnd(e) {
+    if(this.canEventEnd && e.type === 'mouseup') {
+      // 保存蒙版canvas到真正的canvas上
+      copyCanvasImg2Canvas(this._ctx, this.ctx, () => {
+        // 清空蒙版画布
+        clearCanvas(this._ctx)
+      })
     }
   }
-  move(ctx, e) {
+  clearCanvas(type=1){
+    if(type === 1) {
+      clearCanvas(this._ctx)
+    } else if(type === 2) {
+      clearCanvas(this.ctx)
+    } else {
+      clearCanvas(this._ctx)
+      clearCanvas(this.ctx)
+    }
 
   }
-  end(ctx, e) {
+  move(e, ctx) {
+
+  }
+  end(e) {
     this.state.motion = CONST.MOTION_END
   }
 }
 
 class PaintStrategy extends PenStrategy{
-  name = '🖌'
   last = []
-  constructor(state) {
-    super(state)
-    console.log(`当前选择的画笔策略是:${this.name}`)
-  }
-  start(ctx, e) {
+  start(e) {
     const point = [e.clientX, e.clientY]
     // 设置初始状态
-    const motion = this.state.motion
-    if (canMotion(motion)) {
+    if (this.canMotion()) {
       this.state.motion = CONST.MOTION_MOVE
       this.last = point
-      setCtxData(ctx, this.state.penCanvasData)
+      setCtxData(this._ctx, this.state.penCanvasData)
     } else {
       // TODO
     }
   }
-  move(ctx, e) {
-    if (isMotion(this.state.motion)) {
-      drawLine(ctx, this.last, [e.clientX, e.clientY])
+  move(e) {
+    if (this.isMotion()) {
+      drawLine(this._ctx, this.last, [e.clientX, e.clientY])
       this.last = [e.clientX, e.clientY]
     }
-  }
-  end(ctx, e) {
-    this.state.motion = CONST.MOTION_END
   }
 }
 
 class ReatStrategy extends PenStrategy{
   origin = [] // 矩形的起点
   point = []
-  name = '⏹'
-  width = 0
-  height = 0
-  raf
-  ctx
-  start(ctx, e) {
+  start(e) {
     const point = [e.clientX, e.clientY]
-    this.ctx = ctx
     // 设置初始状态
-    const motion = this.state.motion
-    if (canMotion(motion)) {
+    if (this.canMotion()) {
       this.state.motion = CONST.MOTION_DRAG_MOVE
       this.origin = point
       this.point = point
-      setCtxData(ctx, this.state.penCanvasData)
-      saveCtx(this.ctx)
-      this.raf = requestAnimationFrame(this.draw.bind(this));
+      setCtxData(this._ctx, this.state.penCanvasData)
     } else {
       // TODO
     }
   }
-  draw() {
-    drawRect(this.ctx, this.origin, this.point, 'clear')
-    drawRect(this.ctx, this.origin, this.point)
-    if (this.state.motion === CONST.MOTION_DRAG_MOVE) {
-      this.raf = requestAnimationFrame(this.draw.bind(this))
-    } else {
-      cancelAnimationFrame(this.raf)
-    }
-    
-  }
-  move(ctx, e) {
-    if (isMotion(this.state.motion, CONST.MOTION_DRAG_MOVE)) {
+  move(e) {
+    if (this.isMotion(CONST.MOTION_DRAG_MOVE)) {
       // 清除掉之前的矩形框
       this.point = [e.clientX, e.clientY]
+      this.clearCanvas()
+      drawRect(this._ctx, this.origin, this.point)
     }
   }
-  end(ctx, e) {
+  end(e) {
     this.state.motion = CONST.MOTION_END
     this.origin = []
     this.point = []
-    cancelAnimationFrame(this.raf)
-    restoreCtx(this.ctx)
   }
 }
 
 class EraserStrategy extends PenStrategy{
-  name = '🧼'
 }
 
 class CircularStrategy extends PenStrategy{
-  name = '⭕️'
+
+
 }

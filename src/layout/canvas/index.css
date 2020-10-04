@@ -1,0 +1,12 @@
+.canvas-bak{
+  position: absolute;
+  left: 0;
+  top:0;
+  z-index: -1;
+}
+.canvas-bak.top{
+  z-index: -1;
+}
+.canvas-wrap{
+  position: relative;
+}
