@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useEffect }  from 'react';
 import { useDispatch } from '../../store/index'
 import CONST from '../../const'
 import './index.css'
@@ -19,6 +19,7 @@ function Toolbars() {
         <button onClick={togglePen(CONST.RECT)}>矩形框</button>
         <button onClick={togglePen(CONST.CIRCULAR)}>圆形</button>
         <button onClick={togglePen(CONST.ERASER)}>橡皮擦</button>
+        <button onClick={togglePen(CONST.NOONE)}>清空</button>
       </div>
     </div>
   );

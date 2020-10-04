@@ -1,36 +1,48 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { useStore } from '../../store/index'
-import { clearCanvas } from '../../utils/canvas'
+import { useDispatch } from '../../store/index'
+import { strategyFactory } from '../../components/PenStrategy'
 import './index.css'
 
 
 function Canvas() {
+  const dispatch = useDispatch();
   const doc = document.documentElement
   const width =  doc.clientWidth
   const height =  doc.clientHeight
   const canvasRef = useRef(null)
   const canvasBakRef = useRef(null)
-  const strategy = useStore('strategy')
   const [top, setTop] = useState(false)
-  function eventHandler(strategy, event, name) {
+  const eventInitData = useStore('event')
+  let strategy
+  useEffect(() => {
     const canvas = canvasRef.current.getContext('2d')
     const canvasBak = canvasBakRef.current.getContext('2d')
-    strategy.eventStart.call(strategy, event, canvasBak, canvas)
-    strategy[name].call(strategy, event)
+    dispatch({
+      type: 'SET_CTX',
+      payload: {
+        globalCtx: canvas,
+        _globalCtx: canvasBak
+      }
+    })
+    strategy = strategyFactory(eventInitData, canvas, canvasBak)
+  }, [eventInitData])
+  const eventHandler = useCallback((event, name) => {
+    strategy[name] && strategy[name].call(strategy, event)
     if (name==='start') {
       setTop(true)
     }
     if (name==='end') {
       setTop(false)
     }
-    strategy.eventEnd.call(strategy, event, canvasBak, canvas)
-  }
+    strategy.eventEnd.call(strategy, event)
+  }, [eventInitData])
   let canvasBackClass = 'canvas-bak'
   if (top) {
     canvasBackClass += ' top'
   }
   return (
-    <div className="canvas-wrap" onMouseDown={(e) => { eventHandler(strategy, e, 'start') }} onMouseMove={(e) => { eventHandler(strategy, e,  'move') }} onMouseUp={(e) => { eventHandler(strategy, e, 'end') }}>
+    <div className="canvas-wrap" onMouseDown={(e) => { eventHandler( e, 'start') }} onMouseMove={(e) => { eventHandler( e,  'move') }} onMouseUp={(e) => { eventHandler(e, 'end') }}>
       <canvas  width={width} height={height} ref={canvasRef}>
       </canvas>
     <canvas width={width} height={height} className={canvasBackClass} ref={canvasBakRef}>

@@ -8,28 +8,28 @@ const initPenCanvasData = {
   strokeStyle: 'black',
   lineCap: 'round',
 }
-let strategy = strategyFactory({
-  status: CONST.PAINT,
-  motion: CONST.MOTION_NOONE,
-  penCanvasData: initPenCanvasData
-})
+
 export const initialState = {
-  status: CONST.PAINT,
-  motion: CONST.MOTION_NOONE,
-  penCanvasData: initPenCanvasData,
-  strategy
+  event: {
+    status: CONST.PAINT,
+    motion: CONST.MOTION_NOONE,
+    penCanvasData: initPenCanvasData,
+  },
+  globalCtx: null,
+  _globalCtx: null,
+  strategy: strategyFactory({
+    status: CONST.NORMAL
+  })
 }
 
 export function reducer(state, action) {
   switch (action.type) {
     case 'CHANGE_STRATEGY':
-      const { status, motion = state.motion, penCanvasData = state.penCanvasData }  = action.payload
-      strategy =  strategyFactory({
-        status,
-        motion,
-        penCanvasData
-      })
-      return merge(state, {status, motion, penCanvasData, strategy})
+      const payload  = action.payload
+      return merge(state, {event: Object.assign({}, state.event, payload)})
+    case 'SET_CTX':
+      const { globalCtx, _globalCtx }  = action.payload
+      return merge(state, {globalCtx, _globalCtx})
     default:
       return state;
   }

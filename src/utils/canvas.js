@@ -35,7 +35,16 @@ export function copyCanvasImg2Canvas(srcCtx, destCtx, callback) {
     callback && callback()
   }
 }
-
+export function drawStrokeCircle(ctx, start, end) {
+  ctx.beginPath()
+  const [startX ,startY] = start
+  const [endX ,endY] = end
+  let radii = Math.sqrt(
+      (startX - endX) * (startX - endX) + (startY - endY) * (startY - endY)
+  )
+  ctx.arc(startX, startY, radii, 0, Math.PI * 2, false)
+  ctx.stroke()
+}
 export function drawRect(ctx, start, end) {
   ctx.beginPath()
   const [startX ,startY] = start
@@ -46,6 +55,9 @@ export function drawRect(ctx, start, end) {
   ctx.lineTo(startX, endY)
   ctx.lineTo(startX, startY)
   ctx.stroke();
+}
+export function clearReact(ctx, point, size) {
+  ctx.clearRect(point[0], point[1], size, size)
 }
 export function setCtxData(ctx, data) {
   if (ctx) {

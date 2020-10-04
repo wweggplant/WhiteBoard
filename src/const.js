@@ -7,7 +7,7 @@ const FLAGS = {
   RECT: 1 << 2,
   // 橡皮
   ERASER: 1 << 3,
-  //  空状态
+  //  清空状态
   NOONE: 1 << 4,
   // 圆形
   CIRCULAR: 1 << 5,
