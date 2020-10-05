@@ -27,6 +27,15 @@ function Canvas() {
     })
     strategy = strategyFactory(eventInitData, canvas, canvasBak)
   }, [eventInitData])
+  // 回撤/重做功能
+  function saveUndo(img) {
+    dispatch({
+      type: 'PUSH_UNDOSTACK',
+      payload: {
+        canvasData: img
+      }
+    })
+  }
   const eventHandler = useCallback((event, name) => {
     strategy[name] && strategy[name].call(strategy, event)
     if (name==='start') {
@@ -35,8 +44,9 @@ function Canvas() {
     if (name==='end') {
       setTop(false)
     }
-    strategy.eventEnd.call(strategy, event)
+    strategy.eventEnd.call(strategy, event, saveUndo)
   }, [eventInitData])
+
   let canvasBackClass = 'canvas-bak'
   if (top) {
     canvasBackClass += ' top'

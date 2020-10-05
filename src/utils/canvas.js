@@ -16,7 +16,19 @@ export function clearCanvas(ctx) {
   const height = ctx.canvas.height
   ctx.clearRect(0, 0, width, height)
 }
-
+export function image2Canvas(ctx, image) {
+  ctx.drawImage(
+    image,
+    0,
+    0,
+    image.width,
+    image.height,
+    0,
+    0,
+    ctx.canvas.width,
+    ctx.canvas.height
+  )
+}
 export function copyCanvasImg2Canvas(srcCtx, destCtx, callback) {
   const img = new Image()
   img.src = srcCtx.canvas.toDataURL()
@@ -32,7 +44,7 @@ export function copyCanvasImg2Canvas(srcCtx, destCtx, callback) {
         destCtx.canvas.width,
         destCtx.canvas.height
     )
-    callback && callback()
+    callback && callback(img)
   }
 }
 export function drawStrokeCircle(ctx, start, end) {

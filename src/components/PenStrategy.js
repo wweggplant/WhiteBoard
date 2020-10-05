@@ -1,5 +1,5 @@
 import CONST from '../const'
-import { drawLine, drawRect, drawStrokeCircle, clearReact, saveCtx, restoreCtx, setCtxData, copyCanvasImg2Canvas, clearCanvas } from '../utils/canvas'
+import { drawLine, drawRect, drawStrokeCircle, clearReact, image2Canvas, setCtxData, copyCanvasImg2Canvas, clearCanvas } from '../utils/canvas'
 function canMotion(motion) {
   return motion === CONST.MOTION_NOONE || motion === CONST.MOTION_END
 }
@@ -14,13 +14,15 @@ export function strategyFactory(state, ctx, _ctx){
     case CONST.PAINT:
       return new PaintStrategy(ctx, _ctx, state, '🖌')
     case CONST.RECT:
-      return new ReatStrategy(ctx, _ctx, state, '⏹')
+      return new RectStrategy(ctx, _ctx, state, '⏹')
     case CONST.ERASER:
       return new EraserStrategy(ctx, _ctx, state, '🧼')
     case CONST.CIRCULAR:
       return new CircularStrategy(ctx, _ctx, state, '⭕️')
-    case CONST.NOONE:
-      return new ClearStrategy(ctx, _ctx, state, '🔄')
+    case CONST.UNDO:
+      return new UndoStrategy(ctx, _ctx, state, '撤回')
+    case CONST.RESTORE:
+      return new ClearStrategy(ctx, _ctx, state, '重做')
     default:
       return new PenStrategy(state);
   }
@@ -38,25 +40,19 @@ class PenStrategy {
     this._ctx = _ctx
     console.log(`当前选择的画笔策略是:${this.name}`)
   }
-  init() {
-
-  }
   canMotion() {
     return canMotion(this.state.motion)
   }
   isMotion(status = CONST.MOTION_MOVE) {
     return isMotion(this.state.motion, status)
   }
-  eventStart(e, _ctx, ctx) {
-    this._ctx = _ctx
-    this.ctx = ctx
-  }
-  eventEnd(e) {
+  eventEnd(e, callback) {
     if(this.canEventEnd && e.type === 'mouseup') {
       // 保存蒙版canvas到真正的canvas上
-      copyCanvasImg2Canvas(this._ctx, this.ctx, () => {
+      copyCanvasImg2Canvas(this._ctx, this.ctx, (img) => {
         // 清空蒙版画布
         clearCanvas(this._ctx)
+        callback && callback(img)
       })
     }
   }
@@ -76,6 +72,8 @@ class PenStrategy {
   }
   end(e) {
     this.state.motion = CONST.MOTION_END
+    // const event = useStore('event')
+    // console.log(event.undoStack)
   }
 }
 
@@ -100,7 +98,7 @@ class PaintStrategy extends PenStrategy{
   }
 }
 
-class ReatStrategy extends PenStrategy{
+class RectStrategy extends PenStrategy{
   origin = [] // 矩形的起点
   point = []
   start(e) {
@@ -188,5 +186,30 @@ class ClearStrategy extends PenStrategy{
   constructor(ctx, _ctx) {
     super(ctx, _ctx, {}, '');
     clearCanvas(ctx)
+  }
+}
+
+class UndoStrategy extends PenStrategy{
+  constructor(ctx, _ctx, state, name) {
+    super(ctx, _ctx, state, name);
+    clearCanvas(ctx)
+    const { undoStack, restoreStack } = state
+    // console.log('----撤回操作---')
+    // console.log(undoStack, 'undoStack')
+    // console.log(restoreStack, 'restoreStack')
+    // 把栈顶元素推入restoreStack, 这样回撤的时候,正好缺少栈顶的一次操作
+    restoreStack.push(undoStack.pop())
+    // slice出一个浅复制的undoStack,进行后续的操作
+    const copyUndoStack = undoStack.slice()
+    while(copyUndoStack.length > 0) {
+      const img = copyUndoStack.pop()
+      if (img) {
+        restoreStack.push(img)
+        image2Canvas(this.ctx, img)
+      }
+    }
+    // console.log('----撤回操作 end---')
+    // console.log(undoStack, 'undoStack')
+    // console.log(restoreStack, 'restoreStack')
   }
 }

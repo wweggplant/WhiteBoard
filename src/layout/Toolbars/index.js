@@ -1,4 +1,4 @@
-import React, { useEffect }  from 'react';
+import React  from 'react';
 import { useDispatch } from '../../store/index'
 import CONST from '../../const'
 import './index.css'
@@ -24,11 +24,13 @@ function Toolbars() {
   return (
     <div className="toolbars-wrap">
       <div className="toolbars">
+        基本功能:
         <button onClick={togglePen(CONST.PAINT)}>画笔</button>
         <button onClick={togglePen(CONST.RECT)}>矩形框</button>
         <button onClick={togglePen(CONST.CIRCULAR)}>圆形</button>
         <button onClick={togglePen(CONST.ERASER)}>橡皮擦</button>
         <button onClick={togglePen(CONST.NOONE)}>清空</button>
+        属性设置:
         线条粗细:<input type="range" id="volume" name="volume"
                      min="0" max="11" onChange={setSetting('lineWidth')}/>
         颜色:<select onChange={setSetting('strokeStyle')} >
@@ -38,6 +40,8 @@ function Toolbars() {
                 <option value="blue">蓝</option>
                 <option value="green">绿</option>
             </select>
+        撤回/重做: <button onClick={togglePen(CONST.UNDO)}>撤回</button>
+        <button onClick={togglePen(CONST.RESTORE)}>重做</button>
       </div>
     </div>
   );

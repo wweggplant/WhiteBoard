@@ -1,6 +1,5 @@
 import CONST from '../const'
 import { strategyFactory } from '../components/PenStrategy'
-import { setIn } from 'immutable'
 const initPenCanvasData = {
   lineWidth: 5,
   lineColor: 'black',
@@ -14,12 +13,15 @@ export const initialState = {
     status: CONST.PAINT,
     motion: CONST.MOTION_NOONE,
     penCanvasData: initPenCanvasData,
+    undoStack: [],
+    restoreStack: []
   },
   globalCtx: null,
   _globalCtx: null,
   strategy: strategyFactory({
     status: CONST.NORMAL
-  })
+  }),
+  operatorStack: []
 }
 
 export function reducer(state, action) {
@@ -35,6 +37,11 @@ export function reducer(state, action) {
     case 'SET_CANVAS_DATA': {
       const penCanvasData = action.payload
       state.event.penCanvasData = Object.assign({}, state.event.penCanvasData, penCanvasData)
+      return Object.assign({}, state)
+    }
+    case 'PUSH_UNDOSTACK': {
+      const { canvasData } = action.payload
+      state.event.undoStack.push(canvasData)
       return Object.assign({}, state)
     }
     default:
