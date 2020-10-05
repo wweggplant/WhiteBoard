@@ -1,6 +1,6 @@
 import CONST from '../const'
 import { strategyFactory } from '../components/PenStrategy'
-import { merge } from 'immutable';
+import { setIn } from 'immutable'
 const initPenCanvasData = {
   lineWidth: 5,
   lineColor: 'black',
@@ -24,12 +24,19 @@ export const initialState = {
 
 export function reducer(state, action) {
   switch (action.type) {
-    case 'CHANGE_STRATEGY':
+    case 'CHANGE_STRATEGY':{
       const payload  = action.payload
-      return merge(state, {event: Object.assign({}, state.event, payload)})
-    case 'SET_CTX':
+      return Object.assign({}, state, {event: Object.assign({}, state.event, payload)})
+    }
+    case 'SET_CTX':{
       const { globalCtx, _globalCtx }  = action.payload
-      return merge(state, {globalCtx, _globalCtx})
+      return  Object.assign({}, state, {globalCtx, _globalCtx})
+    }
+    case 'SET_CANVAS_DATA': {
+      const penCanvasData = action.payload
+      state.event.penCanvasData = Object.assign({}, state.event.penCanvasData, penCanvasData)
+      return Object.assign({}, state)
+    }
     default:
       return state;
   }
