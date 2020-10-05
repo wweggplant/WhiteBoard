@@ -19,10 +19,12 @@ export function strategyFactory(state, ctx, _ctx){
       return new EraserStrategy(ctx, _ctx, state, '🧼')
     case CONST.CIRCULAR:
       return new CircularStrategy(ctx, _ctx, state, '⭕️')
+    case CONST.NOONE:
+      return new ClearStrategy(ctx, _ctx, state, '清空')
     case CONST.UNDO:
-      return new UndoStrategy(ctx, _ctx, state, '撤回')
+      return new UndoOrRestoreStrategy(ctx, _ctx, state, '撤回')
     case CONST.RESTORE:
-      return new ClearStrategy(ctx, _ctx, state, '重做')
+      return new UndoOrRestoreStrategy(ctx, _ctx, state, '重做')
     default:
       return new PenStrategy(state);
   }
@@ -189,27 +191,31 @@ class ClearStrategy extends PenStrategy{
   }
 }
 
-class UndoStrategy extends PenStrategy{
+class UndoOrRestoreStrategy extends PenStrategy{
   constructor(ctx, _ctx, state, name) {
     super(ctx, _ctx, state, name);
     clearCanvas(ctx)
-    const { undoStack, restoreStack } = state
-    // console.log('----撤回操作---')
-    // console.log(undoStack, 'undoStack')
-    // console.log(restoreStack, 'restoreStack')
-    // 把栈顶元素推入restoreStack, 这样回撤的时候,正好缺少栈顶的一次操作
-    restoreStack.push(undoStack.pop())
+    const { undoStack, restoreStack, status } = state
+    console.log('----撤回操作---')
+    console.log(undoStack, 'undoStack')
+    console.log(restoreStack, 'restoreStack')
+    if (status === CONST.UNDO) {
+      // 把栈顶元素推入restoreStack, 这样回撤的时候,正好缺少栈顶的一次操作
+      restoreStack.push(undoStack.pop())
+    } else if (status === CONST.RESTORE) {
+      undoStack.push(restoreStack.pop())
+    }
+
     // slice出一个浅复制的undoStack,进行后续的操作
-    const copyUndoStack = undoStack.slice()
-    while(copyUndoStack.length > 0) {
-      const img = copyUndoStack.pop()
+    const copyStack = undoStack.slice()
+    while(copyStack.length > 0) {
+      const img = copyStack.pop()
       if (img) {
-        restoreStack.push(img)
         image2Canvas(this.ctx, img)
       }
     }
-    // console.log('----撤回操作 end---')
-    // console.log(undoStack, 'undoStack')
-    // console.log(restoreStack, 'restoreStack')
+    console.log('----撤回操作 end---')
+    console.log(undoStack, 'undoStack')
+    console.log(restoreStack, 'restoreStack')
   }
 }
