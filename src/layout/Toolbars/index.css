@@ -1,9 +1,46 @@
 .toolbars-wrap{
-    position: fixed;
-    top:0px;
-    width: 100%;
-    padding: 10px 20px;
+  position: fixed;
+  top:0px;
+  width: 100%;
 }
 .toolbars{
-    box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
+  box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.toolbars-area{
+  margin: 10px 15px;
+  border-right: 1px solid #080808;
+  padding-right: 15px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+.btn{
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #080808;
+  border-radius: 5px;
+  color: #080808;
+  cursor: pointer;
+  margin: auto 5px;
+}
+.btn:hover{
+  transition: transform  .2s linear;
+  transform: translateY(-10px);
+}
+
+.btn.active{
+  background-color: #080808;
+}
+.btn.active .btn-img{
+  stroke: #fff;
+  fill: #fff;
+}
+.btn-img{
+  stroke-width: 5;
+  stroke: #080808;
+  fill: #080808;
+}
+
