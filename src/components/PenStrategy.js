@@ -1,5 +1,5 @@
 import CONST from '../const'
-import { drawLine, drawRect, drawStrokeCircle, clearReact, image2Canvas, setCtxData, copyCanvasImg2Canvas, clearCanvas } from '../utils/canvas'
+import { drawLine, drawRect, drawStrokeCircle, clearReact, image2Canvas, downCanvas, setCtxData, copyCanvasImg2Canvas, clearCanvas } from '../utils/canvas'
 function canMotion(motion) {
   return motion === CONST.MOTION_NOONE || motion === CONST.MOTION_END
 }
@@ -25,6 +25,8 @@ export function strategyFactory(state, ctx, _ctx){
       return new UndoOrRestoreStrategy(ctx, _ctx, state, '撤回')
     case CONST.RESTORE:
       return new UndoOrRestoreStrategy(ctx, _ctx, state, '重做')
+    case CONST.SAVE:
+      return new SaveStrategy(ctx, _ctx, state, '下载')
     default:
       return new PenStrategy(state);
   }
@@ -217,5 +219,12 @@ class UndoOrRestoreStrategy extends PenStrategy{
     console.log('----撤回操作 end---')
     console.log(undoStack, 'undoStack')
     console.log(restoreStack, 'restoreStack')
+  }
+}
+
+class SaveStrategy extends PenStrategy{
+  constructor(ctx, _ctx, state, name) {
+    super(ctx, _ctx, state, name);
+    downCanvas(ctx, 'canvas')
   }
 }

@@ -1,4 +1,5 @@
-import React  from 'react';
+import React  from 'react'
+import ToolButton from "./ToolButton"
 import { useDispatch, useStore } from '../../store/index'
 import CONST from '../../const'
 import './index.css'
@@ -9,9 +10,11 @@ import { ReactComponent as EraserLogo } from './eraser.svg'
 import { ReactComponent as CleanLogo } from './clean.svg'
 import { ReactComponent as UndoLogo } from './undo.svg'
 import { ReactComponent as RestoreLogo } from './restore.svg'
+import { ReactComponent as SaveLogo } from './save.svg'
+
 
 function Toolbars() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   const togglePen = (status)  => () => {
     dispatch({
       type: 'CHANGE_STRATEGY',
@@ -29,29 +32,25 @@ function Toolbars() {
       }
     });
   }
-  const { status } = useStore('event')
-  function btnClass (sts) {
-    return `btn ${status === sts ? 'active': ''}`
-  }
   return (
     <div className="toolbars-wrap">
       <div className="toolbars">
         <div className="toolbars-area">
-          <div className={btnClass(CONST.PAINT)} onClick={togglePen(CONST.PAINT)}>
-            <PenLogo className="btn-img" />
-          </div>
-          <div className={btnClass(CONST.RECT)} onClick={togglePen(CONST.RECT)}>
-            <RectLogo className="btn-img" />
-          </div>
-          <div className={btnClass(CONST.CIRCULAR)} onClick={togglePen(CONST.CIRCULAR)}>
-            <CircleLogo className="btn-img" />
-          </div>
-          <div className={btnClass(CONST.ERASER)} onClick={togglePen(CONST.ERASER)}>
-            <EraserLogo className="btn-img" />
-          </div>
-          <div className={btnClass(CONST.NOONE)} onClick={togglePen(CONST.NOONE)}>
-            <CleanLogo className="btn-img" />
-          </div>
+          <ToolButton title="重做" status={CONST.PAINT} onClick={togglePen(CONST.PAINT)}>
+            <PenLogo />
+          </ToolButton>
+          <ToolButton title="重做" status={CONST.RECT} onClick={togglePen(CONST.RECT)}>
+            <RectLogo />
+          </ToolButton>
+          <ToolButton title="重做" status={CONST.CIRCULAR} onClick={togglePen(CONST.CIRCULAR)}>
+            <CircleLogo />
+          </ToolButton>
+          <ToolButton title="重做" status={CONST.ERASER} onClick={togglePen(CONST.ERASER)}>
+            <EraserLogo />
+          </ToolButton>
+          <ToolButton title="重做" status={CONST.NOONE} onClick={togglePen(CONST.NOONE)}>
+            <CleanLogo />
+          </ToolButton>
         </div>
         <div className="toolbars-area">
           线条粗细:<input type="range" id="volume" name="volume"
@@ -65,12 +64,17 @@ function Toolbars() {
         </select>
         </div>
         <div className="toolbars-area">
-          <div className={btnClass(CONST.UNDO)} onClick={togglePen(CONST.UNDO)}>
-            <UndoLogo className="btn-img" />
-          </div>
-          <div className={btnClass(CONST.RESTORE)} onClick={togglePen(CONST.RESTORE)}>
-            <RestoreLogo className="btn-img" />
-          </div>
+          <ToolButton title="重做" status={CONST.UNDO} onClick={togglePen(CONST.UNDO)}>
+            <UndoLogo />
+          </ToolButton>
+          <ToolButton title="重做" status={CONST.RESTORE} onClick={togglePen(CONST.RESTORE)}>
+            <RestoreLogo />
+          </ToolButton>
+        </div>
+        <div className="toolbars-area">
+          <ToolButton title="下载" status={CONST.SAVE} onClick={togglePen(CONST.SAVE)}>
+            <SaveLogo />
+          </ToolButton>
         </div>
       </div>
     </div>

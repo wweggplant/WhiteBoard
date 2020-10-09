@@ -13,6 +13,7 @@ const FLAGS = {
   CIRCULAR: 1 << 5,
   UNDO: 1 << 6,
   RESTORE: 1 << 7,
+  SAVE: 1 << 8,
   // 运动状态
   MOTION_NOONE:1 << 100,
   MOTION_START: 1 << 101,

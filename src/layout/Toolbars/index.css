@@ -34,11 +34,11 @@
 .btn.active{
   background-color: #080808;
 }
-.btn.active .btn-img{
+.btn.active .btn-img > svg{
   stroke: #fff;
   fill: #fff;
 }
-.btn-img{
+.btn-img > svg{
   stroke-width: 5;
   stroke: #080808;
   fill: #080808;

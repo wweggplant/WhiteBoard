@@ -47,6 +47,17 @@ export function copyCanvasImg2Canvas(srcCtx, destCtx, callback) {
     callback && callback(img)
   }
 }
+
+export function downCanvas(ctx, filename) {
+  const a = document.createElement('a')
+  a.setAttribute('download', filename)
+  a.setAttribute('href', ctx.canvas.toDataURL())
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+}
+
 export function drawStrokeCircle(ctx, start, end) {
   ctx.beginPath()
   const [startX ,startY] = start
