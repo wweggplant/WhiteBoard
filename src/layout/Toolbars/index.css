@@ -2,12 +2,18 @@
   position: fixed;
   top:0px;
   width: 100%;
+  background-color: #FFF;
 }
 .toolbars{
   box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.toolbars-top-up{
+  height: 10px;
+  cursor: pointer;
+  background-color: #3c3f4170;
 }
 .toolbars-area{
   margin: 10px 15px;
@@ -43,4 +49,28 @@
   stroke: #080808;
   fill: #080808;
 }
+.toolbars-wrap.moveUp {
+  animation:100ms  1 ease-in-out forwards moveUp;
+}
 
+.toolbars-wrap.moveDown {
+  animation:100ms  1 ease-in-out forwards moveDown;
+}
+@keyframes moveUp {
+  from{
+    transform: translateY(0%);
+  }
+  to{
+    transform: translateY(calc(-100% + 10px));
+  }
+}
+
+@keyframes moveDown {
+  from{
+    transform: translateY(calc(-100% + 10px));
+
+  }
+  to{
+    transform: translateY(0%);
+  }
+}
