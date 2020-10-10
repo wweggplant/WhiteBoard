@@ -55,13 +55,8 @@ function Toolbars() {
         <div className="toolbars-area">
           线条粗细:<input type="range" id="volume" name="volume"
                       min="0" max="11" onChange={setSetting('lineWidth')}/>
-          颜色:<select onChange={setSetting('strokeStyle')} >
-          <option value="black">黑</option>
-          <option value="red">红</option>
-          <option value="yellow">黄</option>
-          <option value="blue">蓝</option>
-          <option value="green">绿</option>
-        </select>
+          颜色:
+          <input type="color" onChange={setSetting('strokeStyle')}/>
         </div>
         <div className="toolbars-area">
           <ToolButton title="重做" status={CONST.UNDO} onClick={togglePen(CONST.UNDO)}>
