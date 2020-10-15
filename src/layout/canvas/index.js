@@ -5,11 +5,8 @@ import { strategyFactory } from '../../components/PenStrategy'
 import './index.css'
 
 
-function Canvas() {
+function Canvas(props) {
   const dispatch = useDispatch();
-  const doc = document.documentElement
-  const width =  doc.clientWidth
-  const height =  doc.clientHeight
   const canvasRef = useRef(null)
   const canvasBakRef = useRef(null)
   const [top, setTop] = useState(false)
@@ -37,14 +34,14 @@ function Canvas() {
     })
   }
   const eventHandler = useCallback((event, name) => {
-    strategy[name] && strategy[name].call(strategy, event)
+    strategy && strategy[name] && strategy[name].call(strategy, event)
     if (name==='start') {
       setTop(true)
     }
     if (name==='end') {
       setTop(false)
     }
-    strategy.eventEnd.call(strategy, event, saveUndo)
+    strategy && strategy.eventEnd.call(strategy, event, saveUndo)
   }, [eventInitData])
 
   let canvasBackClass = 'canvas-bak'
@@ -52,11 +49,9 @@ function Canvas() {
     canvasBackClass += ' top'
   }
   return (
-    <div className="canvas-wrap" onMouseDown={(e) => { eventHandler( e, 'start') }} onMouseMove={(e) => { eventHandler( e,  'move') }} onMouseUp={(e) => { eventHandler(e, 'end') }}>
-      <canvas  width={width} height={height} ref={canvasRef}>
-      </canvas>
-    <canvas width={width} height={height} className={canvasBackClass} ref={canvasBakRef}>
-      </canvas>
+    <div className="canvas-wrap" style={ { width: `${props.width}px`, height: `${props.height}px`, margin: 'auto'}} onMouseDown={(e) => { eventHandler( e, 'start') }} onMouseMove={(e) => { eventHandler( e,  'move') }} onMouseUp={(e) => { eventHandler(e, 'end') }}>
+      <canvas width={props.width} height={props.height} className="canvas" ref={canvasRef} />
+      <canvas width={props.width} height={props.height} className={canvasBackClass} ref={canvasBakRef} />
     </div> 
 
   )

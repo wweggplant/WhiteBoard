@@ -16,6 +16,8 @@ export const initialState = {
     undoStack: [],
     restoreStack: []
   },
+  canvasWidth: 1200,
+  canvasHeight: 900,
   globalCtx: null,
   _globalCtx: null,
   strategy: strategyFactory({

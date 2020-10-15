@@ -31,9 +31,24 @@ export function strategyFactory(state, ctx, _ctx){
       return new PenStrategy(state);
   }
 }
+/*
+* 获取原点
+* */
+function getOrigin(ctx) {
+  const canvas = ctx.canvas
+  if (canvas) {
+    const { left, top } = canvas.getBoundingClientRect()
+    return [left, top]
+  }
+  return []
+}
+function getCanvasPoint(point, origin) {
+  return [point[0] - origin[0], point[1] - origin[1]]
+}
 class PenStrategy {
   state
   name
+  origin = []
   canEventEnd = true
   ctx
   _ctx
@@ -42,6 +57,7 @@ class PenStrategy {
     this.name = name
     this.ctx = ctx
     this._ctx = _ctx
+    this.canvasOrigin = getOrigin(ctx)
     console.log(`当前选择的画笔策略是:${this.name}`)
   }
   canMotion() {
@@ -84,7 +100,7 @@ class PenStrategy {
 class PaintStrategy extends PenStrategy{
   last = []
   start(e) {
-    const point = [e.clientX, e.clientY]
+    const point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
     // 设置初始状态
     if (this.canMotion()) {
       this.state.motion = CONST.MOTION_MOVE
@@ -96,8 +112,8 @@ class PaintStrategy extends PenStrategy{
   }
   move(e) {
     if (this.isMotion()) {
-      drawLine(this._ctx, this.last, [e.clientX, e.clientY])
-      this.last = [e.clientX, e.clientY]
+      drawLine(this._ctx, this.last, getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin))
+      this.last = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
     }
   }
 }
@@ -106,7 +122,7 @@ class RectStrategy extends PenStrategy{
   origin = [] // 矩形的起点
   point = []
   start(e) {
-    const point = [e.clientX, e.clientY]
+    const point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
     // 设置初始状态
     if (this.canMotion()) {
       this.state.motion = CONST.MOTION_DRAG_MOVE
@@ -120,7 +136,7 @@ class RectStrategy extends PenStrategy{
   move(e) {
     if (this.isMotion(CONST.MOTION_DRAG_MOVE)) {
       // 清除掉之前的矩形框
-      this.point = [e.clientX, e.clientY]
+      this.point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
       this.clearCanvas()
       drawRect(this._ctx, this.origin, this.point)
     }
@@ -137,7 +153,7 @@ class EraserStrategy extends PenStrategy{
   canEventEnd = false
   size = 50
   start(e) {
-    const point = [e.clientX, e.clientY]
+    const point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
     // 设置初始状态
     if (this.canMotion()) {
       this.state.motion = CONST.MOTION_DRAG_MOVE
@@ -147,7 +163,7 @@ class EraserStrategy extends PenStrategy{
   move(e) {
     if (this.isMotion(CONST.MOTION_DRAG_MOVE)) {
       // 清除掉之前的矩形框
-      this.point = [e.clientX, e.clientY]
+      this.point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
       this.clearCanvas()
       clearReact(this.ctx, this.point, this.size)
     }
@@ -162,7 +178,7 @@ class CircularStrategy extends PenStrategy{
   origin = [] // 圆形原点
   point = []
   start(e) {
-    const point = [e.clientX, e.clientY]
+    const point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
     // 设置初始状态
     if (this.canMotion()) {
       this.state.motion = CONST.MOTION_DRAG_MOVE
@@ -174,7 +190,7 @@ class CircularStrategy extends PenStrategy{
   move(e) {
     if (this.isMotion(CONST.MOTION_DRAG_MOVE)) {
       // 清除掉之前的矩形框
-      this.point = [e.clientX, e.clientY]
+      this.point = getCanvasPoint([e.clientX, e.clientY], this.canvasOrigin)
       this.clearCanvas()
       drawStrokeCircle(this._ctx, this.origin, this.point)
     }

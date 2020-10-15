@@ -3,17 +3,25 @@
   top:0px;
   width: 100%;
   background-color: #FFF;
+  box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
 }
 .toolbars{
-  box-shadow: 1px 1px 6px rgba(47, 55, 61, 0.95);
+  padding: 0 20px;
+}
+.toolbars-inner{
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(#080808,grey) 30 30;
 }
 .toolbars-top-up{
-  height: 10px;
   cursor: pointer;
-  background-color: #3c3f4170;
+  height: 20px;
+
+}
+.toolbars-top-up svg{
+  height: 100%;
 }
 .toolbars-area{
   margin: 10px 15px;
@@ -52,7 +60,9 @@
 .toolbars-wrap.moveUp {
   animation:100ms  1 ease-in-out forwards moveUp;
 }
-
+.toolbars-wrap.moveUp svg{
+  transform: rotateX(180deg);
+}
 .toolbars-wrap.moveDown {
   animation:100ms  1 ease-in-out forwards moveDown;
 }
@@ -61,14 +71,13 @@
     transform: translateY(0%);
   }
   to{
-    transform: translateY(calc(-100% + 10px));
+    transform: translateY(calc(-100% + 20px));
   }
 }
 
 @keyframes moveDown {
   from{
-    transform: translateY(calc(-100% + 10px));
-
+    transform: translateY(calc(-100% + 20px));
   }
   to{
     transform: translateY(0%);
