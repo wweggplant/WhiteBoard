@@ -34,7 +34,7 @@
 .btn{
   display: inline-block;
   padding: 10px;
-  border: 1px solid #080808;
+  border: 1px solid #08080836;
   border-radius: 5px;
   color: #080808;
   cursor: pointer;
@@ -46,16 +46,14 @@
 }
 
 .btn.active{
-  background-color: #080808;
+  background-color: #08080836;
+  border-color: #08080836;
 }
-.btn.active .btn-img > svg{
-  stroke: #fff;
-  fill: #fff;
+.btn.active .btn-img {
+
 }
 .btn-img > svg{
   stroke-width: 5;
-  stroke: #080808;
-  fill: #080808;
 }
 .toolbars-wrap.moveUp {
   animation:100ms  1 ease-in-out forwards moveUp;
